@@ -18,7 +18,7 @@
       }
     },
     mounted() {
-      fetch('http://localhost:9010/media/music/pageList')
+      fetch('/api/media/music/pageList')
         .then((response) => response.json())
         .then((data) => {
           this.images = data
