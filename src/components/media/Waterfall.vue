@@ -53,6 +53,9 @@
 
       const handleClick = (index: number) => {
         console.log(`Clicked image ${index}`)
+        let musicUrl = images.value[index].musicUrl
+        //开始播放
+        isPlaying.value = true
       }
 
       const handleImageLoad = () => {
