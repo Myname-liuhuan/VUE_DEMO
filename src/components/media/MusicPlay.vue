@@ -22,10 +22,11 @@
       </button>
     </div>
   </div>
+  <audio ref="audioPlayer" :src="audioUrl" @timeupdate="updateTime" @ended="onAudioEnd"></audio>
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType } from 'vue'
+  import { defineComponent, ref, PropType, watch } from 'vue'
 
   export default defineComponent({
     name: 'MusicPlay',
@@ -62,6 +63,72 @@
         type: String,
         required: true,
       },
+      audioUrl: {
+        type: String,
+        required: true,
+      },
+    },
+
+    setup(props) {
+      const audioPlayer = ref<HTMLAudioElement | null>(null)
+      const currentTime = ref(0)
+
+      const playAudio = () => {
+        if (audioPlayer.value) {
+          audioPlayer.value.play()
+        }
+      }
+
+      const pauseAudio = () => {
+        if (audioPlayer.value) {
+          audioPlayer.value.pause()
+        }
+      }
+
+      const togglePlayPause = () => {
+        if (props.isPlaying) {
+          pauseAudio()
+        } else {
+          playAudio()
+        }
+        props.onPlayPause()
+      }
+
+      const updateTime = () => {
+        if (audioPlayer.value) {
+          currentTime.value = audioPlayer.value.currentTime
+        }
+      }
+
+      const onAudioEnd = () => {
+        props.onNext()
+      }
+
+      watch(
+        () => props.isPlaying,
+        (newVal) => {
+          if (newVal) {
+            playAudio()
+          } else {
+            pauseAudio()
+          }
+        },
+      )
+
+      const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60)
+        const secs = Math.floor(seconds % 60)
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`
+      }
+
+      return {
+        audioPlayer,
+        currentTime,
+        togglePlayPause,
+        updateTime,
+        onAudioEnd,
+        formatTime,
+      }
     },
   })
 </script>
