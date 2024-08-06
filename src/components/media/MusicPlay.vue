@@ -22,15 +22,19 @@
       </button>
     </div>
   </div>
-  <audio ref="audioPlayer" :src="audioUrl" @timeupdate="updateTime" @ended="onAudioEnd"></audio>
+  <audio ref="audioPlayer" :src="audioUrl" @timeupdate="updateMusicNowTime" @ended="onAudioEnd"></audio>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, PropType, watch } from 'vue'
+  import { defineComponent, ref, PropType } from 'vue'
 
   export default defineComponent({
     name: 'MusicPlay',
     props: {
+      playList: {
+        type: Array as PropType<any[]>,
+        required: true,
+      },
       isPlaying: {
         type: Boolean,
         required: true,
@@ -55,10 +59,6 @@
         type: String,
         required: true,
       },
-      currentProgress: {
-        type: String,
-        required: true,
-      },
       thumbnailUrl: {
         type: String,
         required: true,
@@ -68,66 +68,44 @@
         required: true,
       },
     },
+    setup() {
+      const audioPlayer = ref(null)
+      const currentProgress = ref('00:00')
 
-    setup(props) {
-      const audioPlayer = ref<HTMLAudioElement | null>(null)
-      const currentTime = ref(0)
-
+      //播放
       const playAudio = () => {
         if (audioPlayer.value) {
           audioPlayer.value.play()
         }
       }
 
+      //暂停
       const pauseAudio = () => {
         if (audioPlayer.value) {
           audioPlayer.value.pause()
         }
       }
 
-      const togglePlayPause = () => {
-        if (props.isPlaying) {
-          pauseAudio()
-        } else {
-          playAudio()
-        }
-        props.onPlayPause()
-      }
-
-      const updateTime = () => {
-        if (audioPlayer.value) {
-          currentTime.value = audioPlayer.value.currentTime
-        }
-      }
-
+      //播放结束触发事件
       const onAudioEnd = () => {
-        props.onNext()
+        let now = new Date()
+        console.log('audio end' + now.toLocaleTimeString)
       }
 
-      watch(
-        () => props.isPlaying,
-        (newVal) => {
-          if (newVal) {
-            playAudio()
-          } else {
-            pauseAudio()
-          }
-        },
-      )
-
-      const formatTime = (seconds: number) => {
-        const minutes = Math.floor(seconds / 60)
-        const secs = Math.floor(seconds % 60)
-        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`
+      const updateMusicNowTime = (event) => {
+        const audio = event.target
+        const currentTime = audio.currentTime
+        const minutes = Math.floor(currentTime / 60)
+        const seconds = Math.floor(currentTime % 60)
+        currentProgress.value = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
       }
 
       return {
-        audioPlayer,
-        currentTime,
-        togglePlayPause,
-        updateTime,
+        currentProgress,
+        updateMusicNowTime,
         onAudioEnd,
-        formatTime,
+        playAudio,
+        pauseAudio,
       }
     },
   })

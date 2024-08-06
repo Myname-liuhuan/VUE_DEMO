@@ -5,15 +5,18 @@
         <img :src="image.imageUrl" @load="handleImageLoad" />
       </div>
     </div>
+    <!-- musicPlayRef用于获取子组件对象好调用其中方法 -->
     <MusicPlay
+      ref="musicPlayRef"
+      :play-list="playList"
       :is-playing="isPlaying"
       :on-play-pause="togglePlayPause"
       :on-next="playNext"
       :on-previous="playPrevious"
       :song-title="songTitle"
       :song-duration="songDuration"
-      :current-progress="currentProgress"
       :thumbnail-url="thumbnailUrl"
+      :audio-url="audioUrl"
     />
   </div>
 </template>
@@ -30,22 +33,22 @@
       MusicPlay,
     },
     setup() {
+      const playList = ref([]) //播放列表
       const images = ref([])
       const isPlaying = ref(false)
       const songTitle = ref('龙卷风-dzq')
       const songDuration = ref('5:00')
-      const currentProgress = ref('3:00')
       const thumbnailUrl = ref('https://www.runoob.com/wp-content/themes/runoob/assets/images/qrcode.png')
+      const audioUrl = ref('https://sis-sample-audio.obs.cn-north-1.myhuaweicloud.com/16k16bit.mp3')
       const masonryContainer = ref<HTMLElement | null>(null)
       let resizeObserver: ResizeObserver | null = null
+      const musicPlayRef = ref<InstanceType<typeof MusicPlay> | null>(null) //获取标签中的ref='musicPlayRef'
 
       const togglePlayPause = () => {
         isPlaying.value = !isPlaying.value
       }
 
-      const playNext = () => {
-        console.log('Next song')
-      }
+      const playNext = () => {}
 
       const playPrevious = () => {
         console.log('Previous song')
@@ -54,8 +57,12 @@
       const handleClick = (index: number) => {
         console.log(`Clicked image ${index}`)
         let musicUrl = images.value[index].musicUrl
+        //playList.value.unshift(musicUrl);
+        audioUrl.value = musicUrl
         //开始播放
         isPlaying.value = true
+
+        musicPlayRef.value.playAudio()
       }
 
       const handleImageLoad = () => {
@@ -112,18 +119,20 @@
       })
 
       return {
+        playList,
         images,
         isPlaying,
         songTitle,
         songDuration,
-        currentProgress,
         thumbnailUrl,
+        audioUrl,
         togglePlayPause,
         playNext,
         playPrevious,
         handleClick,
         handleImageLoad,
         masonryContainer,
+        musicPlayRef,
       }
     },
   })
