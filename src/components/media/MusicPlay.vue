@@ -89,7 +89,7 @@
       //播放结束触发事件
       const onAudioEnd = () => {
         let now = new Date()
-        console.log('audio end' + now.toLocaleTimeString)
+        console.log('audio end' + now.toLocaleString())
       }
 
       const updateMusicNowTime = (event) => {
@@ -101,6 +101,7 @@
       }
 
       return {
+        audioPlayer,
         currentProgress,
         updateMusicNowTime,
         onAudioEnd,
