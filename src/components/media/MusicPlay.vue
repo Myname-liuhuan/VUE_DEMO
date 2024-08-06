@@ -31,10 +31,6 @@
   export default defineComponent({
     name: 'MusicPlay',
     props: {
-      playList: {
-        type: Array as PropType<any[]>,
-        required: true,
-      },
       isPlaying: {
         type: Boolean,
         required: true,

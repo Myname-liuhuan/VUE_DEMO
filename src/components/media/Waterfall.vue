@@ -8,7 +8,6 @@
     <!-- musicPlayRef用于获取子组件对象好调用其中方法 -->
     <MusicPlay
       ref="musicPlayRef"
-      :play-list="playList"
       :is-playing="isPlaying"
       :on-play-pause="togglePlayPause"
       :on-next="playNext"
@@ -44,8 +43,17 @@
       let resizeObserver: ResizeObserver | null = null
       const musicPlayRef = ref<InstanceType<typeof MusicPlay> | null>(null) //获取标签中的ref='musicPlayRef'
 
+      //播放或者暂停
       const togglePlayPause = () => {
-        isPlaying.value = !isPlaying.value
+        if (isPlaying.value) {
+          //播放转暂停
+          isPlaying.value = false
+          musicPlayRef.value.pauseAudio()
+        } else {
+          //暂停转播放
+          isPlaying.value = true
+          musicPlayRef.value.playAudio()
+        }
       }
 
       const playNext = () => {}
@@ -54,14 +62,13 @@
         console.log('Previous song')
       }
 
-      const handleClick = (index: number) => {
-        console.log(`Clicked image ${index}`)
+      //瀑布流点击事件
+      const handleClick = async (index: number) => {
         let musicUrl = images.value[index].musicUrl
-        //playList.value.unshift(musicUrl);
         audioUrl.value = musicUrl
         //开始播放
         isPlaying.value = true
-
+        await nextTick()
         musicPlayRef.value.playAudio()
       }
 
@@ -119,7 +126,6 @@
       })
 
       return {
-        playList,
         images,
         isPlaying,
         songTitle,
