@@ -32,7 +32,7 @@
       MusicPlay,
     },
     setup() {
-      const playList = ref([]) //播放列表
+      let playList = [] //播放列表
       const images = ref([])
       const isPlaying = ref(false)
       const songTitle = ref('龙卷风-dzq')
@@ -66,8 +66,14 @@
       const handleClick = async (index: number) => {
         let musicUrl = images.value[index].musicUrl
         audioUrl.value = musicUrl
+        //如果播放列表中存在该歌曲，则删除
+        if (playList.includes(musicUrl)) {
+          playList = playList.filter((item) => item !== musicUrl)
+        }
+        playList.unshift(musicUrl)
         //开始播放
         isPlaying.value = true
+        //等待dom更新完成
         await nextTick()
         musicPlayRef.value.playAudio()
       }
