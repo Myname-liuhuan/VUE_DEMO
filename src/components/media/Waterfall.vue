@@ -12,6 +12,7 @@
       :on-play-pause="togglePlayPause"
       :on-next="playNext"
       :on-previous="playPrevious"
+      :on-audio-end="onAudioEnd"
       :song-title="songTitle"
       :song-duration="songDuration"
       :thumbnail-url="thumbnailUrl"
@@ -92,6 +93,15 @@
         }
       }
 
+      //播放结束触发事件
+      const onAudioEnd = () => {
+        let now = new Date()
+        console.log('audio end ' + now.toLocaleString())
+
+        //修改播放ui为暂停显示
+        isPlaying.value = false
+      }
+
       //瀑布流点击事件
       const handleClick = async (index: number) => {
         let musicUrl = images.value[index].musicUrl
@@ -108,12 +118,6 @@
         musicPlayRef.value.playAudio()
       }
 
-      const handleImageLoad = () => {
-        nextTick(() => {
-          initializeMasonry()
-        })
-      }
-
       const fetchImages = async () => {
         try {
           const response = await axios.get('/api/media/music/pageList')
@@ -125,6 +129,12 @@
         } catch (error) {
           console.error('Error fetching images:', error)
         }
+      }
+
+      const handleImageLoad = () => {
+        nextTick(() => {
+          initializeMasonry()
+        })
       }
 
       const initializeMasonry = () => {
@@ -171,6 +181,7 @@
         togglePlayPause,
         playNext,
         playPrevious,
+        onAudioEnd,
         handleClick,
         handleImageLoad,
         masonryContainer,

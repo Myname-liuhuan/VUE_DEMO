@@ -47,6 +47,10 @@
         type: Function as PropType<() => void>,
         required: true,
       },
+      onAudioEnd: {
+        type: Function as PropType<() => void>,
+        required: true,
+      },
       songTitle: {
         type: String,
         required: true,
@@ -82,12 +86,6 @@
         }
       }
 
-      //播放结束触发事件
-      const onAudioEnd = () => {
-        let now = new Date()
-        console.log('audio end' + now.toLocaleString())
-      }
-
       const updateMusicNowTime = (event) => {
         const audio = event.target
         const currentTime = audio.currentTime
@@ -100,7 +98,6 @@
         audioPlayer,
         currentProgress,
         updateMusicNowTime,
-        onAudioEnd,
         playAudio,
         pauseAudio,
       }
