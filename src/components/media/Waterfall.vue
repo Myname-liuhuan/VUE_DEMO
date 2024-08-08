@@ -98,12 +98,18 @@
         let now = new Date()
         console.log('audio end ' + now.toLocaleString())
 
-        //修改播放ui为暂停显示
+        //修改播放ui显示为暂停
         isPlaying.value = false
       }
 
       //瀑布流点击事件
       const handleClick = async (index: number) => {
+        //修改时长
+        let minutes = Math.floor(images.value[index].musicTimeLength / 60)
+        let second = images.value[index].musicTimeLength % 60
+        songDuration.value = minutes + ':' + second
+
+        //修改audio标签播放源
         let musicUrl = images.value[index].musicUrl
         audioUrl.value = musicUrl
         //如果播放列表中存在该歌曲，则删除
