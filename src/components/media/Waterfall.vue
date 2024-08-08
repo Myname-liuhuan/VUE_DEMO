@@ -75,6 +75,7 @@
           }
           audioUrl.value = playList[index]['musicUrl']
           songDuration.value = playList[index]['songDuration']
+          thumbnailUrl.value = playList[index]['thumbnailUrl']
           //如果当前是播放状态,就自动播放
           if (isPlaying.value) {
             await nextTick()
@@ -101,6 +102,7 @@
           }
           audioUrl.value = playList[index]['musicUrl']
           songDuration.value = playList[index]['songDuration']
+          thumbnailUrl.value = playList[index]['thumbnailUrl']
           //如果当前是播放状态,就自动播放
           if (isPlaying.value) {
             await nextTick()
@@ -123,13 +125,15 @@
         //修改时长
         let minutes = Math.floor(images.value[index].musicTimeLength / 60)
         let second = images.value[index].musicTimeLength % 60
-
         let musicPlayJson = {}
         musicPlayJson['musicUrl'] = images.value[index].musicUrl
         musicPlayJson['songDuration'] = minutes + ':' + second
+        musicPlayJson['thumbnailUrl'] = images.value[index].miniImageUrl
+
         //修改audio标签播放源
         audioUrl.value = musicPlayJson['musicUrl']
         songDuration.value = musicPlayJson['songDuration']
+        thumbnailUrl.value = musicPlayJson['thumbnailUrl']
         //如果播放列表中存在该歌曲，则删除
         if (playList.includes(musicPlayJson)) {
           playList = playList.filter((item) => item !== musicPlayJson)
