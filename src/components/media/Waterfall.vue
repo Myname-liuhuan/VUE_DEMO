@@ -56,10 +56,40 @@
         }
       }
 
-      const playNext = () => {}
+      //下一首
+      const playNext = async () => {
+        if (playList && playList.length > 1) {
+          let index = playList.indexOf(audioUrl.value)
+          if (index == playList.length - 1) {
+            index = 0
+          } else {
+            index++
+          }
+          audioUrl.value = playList[index]
+          //如果当前是播放状态,就自动播放
+          if (isPlaying.value) {
+            await nextTick()
+            musicPlayRef.value.playAudio()
+          }
+        }
+      }
 
-      const playPrevious = () => {
-        console.log('Previous song')
+      //上一首
+      const playPrevious = async () => {
+        if (playList && playList.length > 1) {
+          let index = playList.indexOf(audioUrl.value)
+          if (index == 0) {
+            index = playList.length - 1
+          } else {
+            index--
+          }
+          audioUrl.value = playList[index]
+          //如果当前是播放状态,就自动播放
+          if (isPlaying.value) {
+            await nextTick()
+            musicPlayRef.value.playAudio()
+          }
+        }
       }
 
       //瀑布流点击事件
