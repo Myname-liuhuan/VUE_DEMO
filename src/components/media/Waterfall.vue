@@ -37,7 +37,7 @@
       const images = ref([])
       const isPlaying = ref(false)
       const songTitle = ref('龙卷风-dzq')
-      const songDuration = ref('5:00')
+      const songDuration = ref('00:00')
       const thumbnailUrl = ref('https://www.runoob.com/wp-content/themes/runoob/assets/images/qrcode.png')
       const audioUrl = ref('https://sis-sample-audio.obs.cn-north-1.myhuaweicloud.com/16k16bit.mp3')
       const masonryContainer = ref<HTMLElement | null>(null)
@@ -60,13 +60,21 @@
       //下一首
       const playNext = async () => {
         if (playList && playList.length > 1) {
-          let index = playList.indexOf(audioUrl.value)
+          let index = -1
+          for (let i = 0; i < playList.length; i++) {
+            if (playList[i]['musicUrl'] == audioUrl.value) {
+              index = i
+              break
+            }
+          }
+
           if (index == playList.length - 1) {
             index = 0
           } else {
             index++
           }
-          audioUrl.value = playList[index]
+          audioUrl.value = playList[index]['musicUrl']
+          songDuration.value = playList[index]['songDuration']
           //如果当前是播放状态,就自动播放
           if (isPlaying.value) {
             await nextTick()
@@ -78,13 +86,21 @@
       //上一首
       const playPrevious = async () => {
         if (playList && playList.length > 1) {
-          let index = playList.indexOf(audioUrl.value)
+          let index = -1
+          for (let i = 0; i < playList.length; i++) {
+            if (playList[i]['musicUrl'] == audioUrl.value) {
+              index = i
+              break
+            }
+          }
+
           if (index == 0) {
             index = playList.length - 1
           } else {
             index--
           }
-          audioUrl.value = playList[index]
+          audioUrl.value = playList[index]['musicUrl']
+          songDuration.value = playList[index]['songDuration']
           //如果当前是播放状态,就自动播放
           if (isPlaying.value) {
             await nextTick()
@@ -107,16 +123,18 @@
         //修改时长
         let minutes = Math.floor(images.value[index].musicTimeLength / 60)
         let second = images.value[index].musicTimeLength % 60
-        songDuration.value = minutes + ':' + second
 
+        let musicPlayJson = {}
+        musicPlayJson['musicUrl'] = images.value[index].musicUrl
+        musicPlayJson['songDuration'] = minutes + ':' + second
         //修改audio标签播放源
-        let musicUrl = images.value[index].musicUrl
-        audioUrl.value = musicUrl
+        audioUrl.value = musicPlayJson['musicUrl']
+        songDuration.value = musicPlayJson['songDuration']
         //如果播放列表中存在该歌曲，则删除
-        if (playList.includes(musicUrl)) {
-          playList = playList.filter((item) => item !== musicUrl)
+        if (playList.includes(musicPlayJson)) {
+          playList = playList.filter((item) => item !== musicPlayJson)
         }
-        playList.unshift(musicUrl)
+        playList.unshift(musicPlayJson)
         //开始播放
         isPlaying.value = true
         //等待dom更新完成
