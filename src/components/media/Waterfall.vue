@@ -227,7 +227,7 @@
 
   .masonry-item {
     width: 200px; /* Adjust the width as needed */
-    margin: 10px;
+    margin-left: 10px;
   }
 
   img {
