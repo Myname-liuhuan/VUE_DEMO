@@ -3,6 +3,7 @@
     <div ref="masonryContainer" class="masonry-container">
       <div v-for="(image, index) in images" :key="image.id" class="masonry-item" @click="handleClick(index)">
         <img :src="image.imageUrl" @load="handleImageLoad" />
+        <span>测试文本</span>
       </div>
     </div>
     <!-- musicPlayRef用于获取子组件对象好调用其中方法 -->
@@ -230,9 +231,24 @@
   }
 
   .masonry-item {
+    position: relative;
+    text-align: center;
     width: 200px; /* Adjust the width as needed */
     margin-left: 10px;
     margin-top: 5px;
+  }
+  /* 让文本悬浮于图片中 样式被注释，启用修改p为span*/
+  .masonry-item p {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white; /* 如果需要的话，设置文本颜色 */
+    font-size: 14px; /* 调整文本大小 */
+    background-color: rgba(0, 0, 0, 0.5); /* 添加背景色使文本更清晰 */
+    padding: 5px; /* 给文本添加内边距 */
+    border-radius: 5px; /* 添加圆角 */
   }
 
   img {
