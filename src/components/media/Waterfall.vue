@@ -130,7 +130,7 @@
         let second = images.value[index].musicTimeLength % 60
         let musicPlayJson = {}
         musicPlayJson['musicUrl'] = images.value[index].musicUrl
-        musicPlayJson['songDuration'] = minutes + ':' + second
+        musicPlayJson['songDuration'] = (minutes < 10 ? '0' + minutes : minutes) + ':' + (second < 10 ? '0' + second : second)
         musicPlayJson['thumbnailUrl'] = images.value[index].miniImageUrl
         musicPlayJson['songTitle'] = images.value[index].musicName + '-' + images.value[index].singerName
 
