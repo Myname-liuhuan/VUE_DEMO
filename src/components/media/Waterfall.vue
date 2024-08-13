@@ -3,7 +3,7 @@
     <div ref="masonryContainer" class="masonry-container">
       <div v-for="(image, index) in images" :key="image.id" class="masonry-item" @click="handleClick(index)">
         <img :src="image.imageUrl" @load="handleImageLoad" />
-        <span>测试文本</span>
+        <span>{{ image.musicName + '-' + image.singerName }}</span>
       </div>
     </div>
     <!-- musicPlayRef用于获取子组件对象好调用其中方法 -->
