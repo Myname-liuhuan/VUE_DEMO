@@ -113,9 +113,12 @@
     background-color: rgba(255, 255, 255, 0.8);
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: absolute;
+    position: fixed; /* 将 absolute 改为 fixed */
     bottom: 5px;
     width: 98%;
+    left: 50%;
+    transform: translateX(-50%); /* 确保组件在水平方向上居中 */
+    z-index: 1000; /* 确保组件在其他内容之上 */
   }
 
   .thumbnail {

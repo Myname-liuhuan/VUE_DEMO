@@ -153,7 +153,9 @@
 
       const fetchImages = async () => {
         try {
-          const response = await axios.get('/api/media/music/pageListJoinSong')
+          let pageNum = 1
+          let pageSize = 30
+          const response = await axios.get('/api/media/music/pageListJoinSong?pageNum=' + pageNum + '&pageSize=' + pageSize)
           if (response.status === 200) {
             images.value = response.data.data.records
           } else {
