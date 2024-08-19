@@ -103,7 +103,7 @@
       // 获取数据
       fetchData() {
         axios
-          .get('/api/music', {
+          .get('/api/media/music/pageList', {
             params: {
               musicName: this.searchForm.musicName,
               page: this.pagination.currentPage,
@@ -111,7 +111,7 @@
             },
           })
           .then((response) => {
-            this.musicList = response.data.list
+            this.musicList = response.data.data.records
             this.pagination.total = response.data.total
           })
       },

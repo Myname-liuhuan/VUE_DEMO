@@ -6,7 +6,7 @@ const mediaRouter = [
   {
     path: '/media',
     component: Layout,
-    redirect: '/media/musicinfo',
+    redirect: '/media/musiclist',
     name: 'media',
     meta: {
       title: '媒体',
@@ -15,9 +15,9 @@ const mediaRouter = [
     children: [
       //musicManager子页面
       {
-        path: '/media/musicinfo',
-        component: () => import('@/views/media/music/musicinfo.vue'),
-        name: 'musicinfo',
+        path: '/media/musiclist',
+        component: () => import('@/views/media/musictable/musiclist.vue'),
+        name: 'musiclist',
         meta: { title: '音频列表', keepAlive: true, icon: 'MenuIcon' },
       },
     ],
