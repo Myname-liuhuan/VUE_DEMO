@@ -58,23 +58,9 @@
   const loading = ref(true)
   const appContainer = ref(null)
   import PropTable from '@/components/Table/PropTable/index.vue'
+  import axios from 'axios'
   const data = []
-  for (let i = 0; i < 100; i++) {
-    data.push({
-      date: '2016-05-02',
-      name: '王五' + i,
-      price: 1 + i,
-      province: '上海',
-      admin: 'admin',
-      sex: i % 2 ? 1 : 0,
-      checked: true,
-      id: i + 1,
-      age: 0,
-      city: '普陀区',
-      address: '上海市普上海',
-      zip: 200333,
-    })
-  }
+
   let baseColumns = reactive(columns)
   const list = ref(data)
 
@@ -213,6 +199,18 @@
   onMounted(() => {
     nextTick(() => {
       // let data = appContainer.value.
+      axios
+        .get('/api/media/music/pageList', {
+          params: {
+            musicName: this.searchForm.musicName,
+            pageNum: this.pagination.currentPage,
+            pageSize: this.pagination.pageSize,
+          },
+        })
+        .then((response) => {
+          this.musicList = response.data.data.records
+          this.pagination.total = response.data.total
+        })
     })
     setTimeout(() => {
       loading.value = false
