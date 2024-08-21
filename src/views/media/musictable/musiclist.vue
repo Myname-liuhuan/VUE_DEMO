@@ -4,6 +4,7 @@
       :loading="loading"
       :columns="baseColumns"
       :data="list"
+      :total="total"
       @selection-change="selectionChange"
       @reset="reset"
       @on-submit="onSubmit"
@@ -49,7 +50,7 @@
     </el-dialog>
   </div>
 </template>
-<script lang="ts" setup name="comprehensive">
+<script lang="ts" setup name="music">
   import { ref, reactive, onMounted, nextTick } from 'vue'
   import * as dayjs from 'dayjs'
   import { ElMessage, ElMessageBox } from 'element-plus'
@@ -57,12 +58,12 @@
   import { columns } from './constants'
   const loading = ref(true)
   const appContainer = ref(null)
-  import PropTable from '@/components/Table/PropTable/index.vue'
+  import PropTable from './proptable.vue'
   import axios from 'axios'
-  const data = []
 
   let baseColumns = reactive(columns)
-  const list = ref(data)
+  let list = ref([])
+  let total = ref(0)
 
   const formSize = ref('default')
   const ruleFormRef = ref<FormInstance>()
@@ -198,18 +199,18 @@
 
   onMounted(() => {
     nextTick(() => {
-      // let data = appContainer.value.
       axios
-        .get('/api/media/music/pageList', {
+        .get('/api/media/music/pageListJoinSong', {
           params: {
-            musicName: this.searchForm.musicName,
-            pageNum: this.pagination.currentPage,
-            pageSize: this.pagination.pageSize,
+            // musicName: "le",
+            pageNum: null,
+            pageSize: null,
           },
         })
         .then((response) => {
-          this.musicList = response.data.data.records
-          this.pagination.total = response.data.total
+          list.value = response.data.data.records
+          total.value = response.data.data.total
+          console.log(response.data.data)
         })
     })
     setTimeout(() => {

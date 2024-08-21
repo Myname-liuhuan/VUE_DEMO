@@ -103,7 +103,7 @@
       // 获取数据
       fetchData() {
         axios
-          .get('/api/media/music/pageList', {
+          .get('/api/media/music/pageListJoinSong', {
             params: {
               musicName: this.searchForm.musicName,
               page: this.pagination.currentPage,
