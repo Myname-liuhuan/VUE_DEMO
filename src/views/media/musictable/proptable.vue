@@ -89,6 +89,10 @@
     return props.columns.filter((item) => item.valueType && item.search)
   })
 
+  /**
+   * 使用的分页控件里面会有对传入参数操作的情况，为了符合子页面不修改父页面传入参数的vue规范
+   * 所以这里封装一个计算属性和父页面传入的数据一样
+   */
   const paginationInfo = computed(() => {
     return {
       currentPage: props.pagination.currentPage,
