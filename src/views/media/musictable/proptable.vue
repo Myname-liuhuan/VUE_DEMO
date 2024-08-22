@@ -16,7 +16,7 @@
         <el-table
           v-loading="loading"
           class="zb-table"
-          :data="list"
+          :data="data"
           :border="true"
           @selection-change="(val) => emit('selection-change', val)"
         >
@@ -33,8 +33,8 @@
       <!-- ------------分页--------------->
       <div class="pagination">
         <el-pagination
-          v-model:currentPage="pagination.currentPage"
-          :page-size="10"
+          v-model:currentPage="paginationInfo.currentPage"
+          :page-size="paginationInfo.pageSize"
           background
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
@@ -46,7 +46,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed, ref } from 'vue'
+  import { computed, PropType, ref } from 'vue'
   import SearchForm from '@/components/SearchForm/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance } from 'element-plus'
@@ -65,9 +65,22 @@
       type: Number,
       default: () => 0,
     },
+    pagination: {
+      type: Object as PropType<{ currentPage: number; pageSize: number }>,
+      default: () => {
+        return {
+          currentPage: 1,
+          pageSize: 10,
+        }
+      },
+    },
     loading: {
       type: Boolean,
       default: false,
+    },
+    handleCurrentChange: {
+      type: Function as PropType<(val: number) => void>,
+      required: true,
     },
   })
 
@@ -76,9 +89,11 @@
     return props.columns.filter((item) => item.valueType && item.search)
   })
 
-  const pagination = reactive({
-    currentPage: 1,
-    pageSize: 10,
+  const paginationInfo = computed(() => {
+    return {
+      currentPage: props.pagination.currentPage,
+      pageSize: props.pagination.pageSize,
+    }
   })
 
   const currentPage = ref(1)
@@ -87,15 +102,6 @@
   const handleSizeChange = (val: number) => {
     console.log(`${val} items per page`)
   }
-  const handleCurrentChange = (val: number) => {
-    console.log(`current page: ${val}`)
-    pagination.currentPage = val
-  }
-
-  const list = computed(() => {
-    let arr = JSON.parse(JSON.stringify(props.data))
-    return arr.splice((pagination.currentPage - 1) * 10, 10)
-  })
 
   const listLoading = ref(false)
   const confirmEdit = (row) => {

@@ -5,6 +5,8 @@
       :columns="baseColumns"
       :data="list"
       :total="total"
+      :pagination="pagination"
+      :handle-current-change="handleCurrentChange"
       @selection-change="selectionChange"
       @reset="reset"
       @on-submit="onSubmit"
@@ -12,10 +14,13 @@
       <template #btn>
         <div style="display: flex; justify-content: flex-end">
           <el-button type="primary" @click="add"
-            ><el-icon><plus /></el-icon> 添加</el-button
+            ><el-icon>
+              <plus />
+            </el-icon>
+            添加</el-button
           >
           <el-button type="danger" @click="batchDelete"
-            ><el-icon><delete /></el-icon>删除</el-button
+            ><el-icon> <delete /> </el-icon>删除</el-button
           >
         </div>
       </template>
@@ -71,6 +76,11 @@
     name: '',
     sex: null,
     price: null,
+  })
+
+  const pagination = reactive({
+    currentPage: 1,
+    pageSize: 10,
   })
 
   const rules = reactive({
@@ -197,32 +207,40 @@
     }, 500)
   }
 
+  //绑定框架事件,在上一页和下一页的时候会被调用
+  const handleCurrentChange = (val: number) => {
+    console.log(`current page: ${val}`)
+    let params = { pageNum: val, pageSize: pagination.pageSize }
+    loadPageList(params)
+  }
+
   onMounted(() => {
     nextTick(() => {
-      axios
-        .get('/api/media/music/pageListJoinSong', {
-          params: {
-            // musicName: "le",
-            pageNum: null,
-            pageSize: null,
-          },
-        })
-        .then((response) => {
-          list.value = response.data.data.records
-          total.value = response.data.data.total
-          console.log(response.data.data)
-        })
+      let params = { pageNum: pagination.currentPage, pageSize: pagination.pageSize }
+      loadPageList(params)
     })
     setTimeout(() => {
       loading.value = false
     }, 500)
   })
+
+  function loadPageList(params) {
+    axios
+      .get('/api/media/music/pageListJoinSong', {
+        params: params,
+      })
+      .then((response) => {
+        list.value = response.data.data.records
+        total.value = response.data.data.total
+      })
+  }
 </script>
 
 <style scoped>
   .edit-input {
     padding-right: 100px;
   }
+
   .app-container {
     flex: 1;
     display: flex;
@@ -230,6 +248,7 @@
     padding: 16px;
     box-sizing: border-box;
   }
+
   .cancel-btn {
     position: absolute;
     right: 15px;
