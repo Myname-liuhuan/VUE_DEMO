@@ -1,7 +1,7 @@
 <template>
   <div class="zb-pro-table">
     <div class="header">
-      <SearchForm :columns="baseFormColumns" @submit="onSubmit" />
+      <SearchForm :columns="baseFormColumns" @submit="onSubmit" @reset="reset" />
     </div>
 
     <!----------底部---------------------->

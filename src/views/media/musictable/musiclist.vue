@@ -190,12 +190,14 @@
       .catch(() => {})
   }
 
+  /**
+   * 重置按钮
+   */
   const reset = () => {
-    loading.value = true
-    setTimeout(() => {
-      loading.value = false
-    }, 500)
     ElMessage.success('触发重置方法')
+    loading.value = true
+    loadPageList({ ...pagination })
+    loading.value = false
   }
 
   //查询按钮
