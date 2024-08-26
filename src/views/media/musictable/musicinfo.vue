@@ -1,183 +1,86 @@
-<template>
-  <div class="music-info">
-    <!-- 搜索区域 -->
-    <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-      <el-form-item label="音乐名">
-        <el-input v-model="searchForm.musicName" placeholder="请输入音乐名"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="fetchData">搜索</el-button>
-        <el-button type="primary" @click="openDialog">添加音乐</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- 列表区域 -->
-    <el-table :data="musicList" style="width: 100%">
-      <el-table-column prop="id" label="ID" width="180"></el-table-column>
-      <el-table-column prop="musicName" label="音乐名"></el-table-column>
-      <el-table-column prop="singerId" label="歌手ID"></el-table-column>
-      <el-table-column prop="musicTimeLength" label="时长(s)"></el-table-column>
-      <el-table-column label="操作">
-        <template #default="scope">
-          <el-button @click="viewDetail(scope.row)">查看详情</el-button>
-          <el-button type="danger" @click="deleteMusic(scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <!-- 分页 -->
-    <el-pagination
-      :current-page="pagination.currentPage"
-      :page-size="pagination.pageSize"
-      :total="pagination.total"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    >
-    </el-pagination>
-
-    <!-- 详情和添加的对话框 -->
-    <el-dialog v-model:visible="isDialogVisible" :title="dialogTitle">
-      <el-form :model="formData">
-        <el-form-item label="音乐名">
-          <el-input v-model="formData.musicName"></el-input>
+<!-- <template>
+   <el-dialog v-model="dialogVisible" :title="title" width="50%">
+      <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm" :size="formSize">
+        <el-form-item label="音频名称" prop="musicName">
+          <el-input v-model="ruleForm.musicName" />
         </el-form-item>
-        <el-form-item label="歌手ID">
-          <el-input v-model="formData.singerId"></el-input>
+        
+        <el-form-item label="音频链接" prop="musicUrl">
+          <el-input v-model="ruleForm.musicUrl" />
         </el-form-item>
-        <el-form-item label="音乐时长">
-          <el-input v-model="formData.musicTimeLength" type="number"></el-input>
+        <el-form-item label="图片链接" prop="imageUrl">
+          <el-input v-model="ruleForm.imageUrl" />
         </el-form-item>
-        <el-form-item label="音乐URL">
-          <el-input v-model="formData.musicUrl"></el-input>
+        <el-form-item label="缩略图链接" prop="miniImageUrl">
+          <el-input v-model="ruleForm.miniImageUrl" />
         </el-form-item>
-        <el-form-item label="图片URL">
-          <el-input v-model="formData.imageUrl"></el-input>
-        </el-form-item>
-        <el-form-item label="缩略图URL">
-          <el-input v-model="formData.miniImageUrl"></el-input>
+       <el-form-item label="歌手" prop="singerId">
+          <el-select v-model="ruleForm.singerId" placeholder="请选择歌手">
+            <el-option v-for="item in singerList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
-        <div>
-          <el-button @click="isDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleSave">保存</el-button>
-        </div>
+        <span class="dialog-footer">
+          <el-button @click="cancelDialog">取消</el-button>
+          <el-button type="primary" @click="handleClose(ruleFormRef)">确定</el-button>
+        </span>
       </template>
     </el-dialog>
-  </div>
 </template>
 
-<script>
-  import axios from 'axios'
+<script setup lang="ts">
+import { ElMessage } from 'element-plus'
+import { PropType, reactive, ref } from 'vue'
+import type { FormInstance } from 'element-plus'
 
-  export default {
-    data() {
+let props = defineProps({
+  dialogVisible :{
+    type: Boolean as PropType<boolean>,
+    default: false,
+  },
+  singerList: {
+    type: Array,
+    default: () => [],
+  },
+  rules: {
+    type: Object ,
+    default: () => {
       return {
-        searchForm: {
-          musicName: '',
-        },
-        musicList: [],
-        pagination: {
-          currentPage: 1,
-          pageSize: 10,
-          total: 0,
-        },
-        isDialogVisible: false,
-        dialogTitle: '',
-        formData: {
-          id: null,
-          musicName: '',
-          singerId: '',
-          musicTimeLength: 0,
-          musicUrl: '',
-          imageUrl: '',
-          miniImageUrl: '',
-        },
+        musicName: [{ required: true, message: '请输入音频名称', trigger: 'blur' }],
       }
-    },
-    mounted() {
-      this.fetchData()
-    },
-    methods: {
-      // 获取数据
-      fetchData() {
-        axios
-          .get('/api/media/music/pageListJoinSong', {
-            params: {
-              musicName: this.searchForm.musicName,
-              page: this.pagination.currentPage,
-              size: this.pagination.pageSize,
-            },
-          })
-          .then((response) => {
-            this.musicList = response.data.data.records
-            this.pagination.total = response.data.total
-          })
-      },
-      // 查看详情
-      viewDetail(row) {
-        this.dialogTitle = '查看详情'
-        this.formData = { ...row }
-        this.isDialogVisible = true
-      },
-      // 打开添加对话框
-      openDialog() {
-        this.dialogTitle = '添加音乐'
-        this.resetForm()
-        this.isDialogVisible = true
-      },
-      // 删除音乐
-      deleteMusic(id) {
-        axios.delete(`/api/music/${id}`).then(() => {
-          this.fetchData()
-        })
-      },
-      // 保存（添加或更新）
-      handleSave() {
-        if (this.formData.id) {
-          // 更新
-          axios.put(`/api/music/${this.formData.id}`, this.formData).then(() => {
-            this.isDialogVisible = false
-            this.fetchData()
-          })
-        } else {
-          // 添加
-          axios.post('/api/music', this.formData).then(() => {
-            this.isDialogVisible = false
-            this.fetchData()
-          })
-        }
-      },
-      // 重置表单
-      resetForm() {
-        this.formData = {
-          id: null,
-          musicName: '',
-          singerId: '',
-          musicTimeLength: 0,
-          musicUrl: '',
-          imageUrl: '',
-          miniImageUrl: '',
-        }
-      },
-      // 分页相关
-      handleSizeChange(val) {
-        this.pagination.pageSize = val
-        this.fetchData()
-      },
-      handleCurrentChange(val) {
-        this.pagination.currentPage = val
-        this.fetchData()
-      },
-    },
-  }
-</script>
+    }
+  },
+  ruleForm: {
+    type: Object as PropType<{ musicName: string; musicUrl: string; imageUrl: string; miniImageUrl: string; singerId: string }>,
+    required: true,
+  },
+  ruleFormRef: {
+    type: Object as PropType<FormInstance>,
+    required: true,
+  },
+  cancelDialog: {
+    type: Function as PropType<() => void>,
+    required: true,
+  },
+  handleClose: {
+    type: Function as PropType<(val: any) => void>,
+    required: true,
+  },
+  
+})
 
-<style scoped>
-  .music-info {
-    padding: 20px;
-    width: 100%;
-    height: 100%;
-  }
-</style>
+const title = ref('新增')
+
+
+// <MusicInfo
+//      :dialog-visible="dialogVisible"
+//      :singer-list="singerList"
+//      :rules="rules"
+//      :rule-form="ruleForm"
+//      :rule-form-ref="ruleFormRef"
+//      :cancel-dialog="cancelDialog"
+//      :handle-close="handleClose"
+//      ></MusicInfo>
+
+</script> -->

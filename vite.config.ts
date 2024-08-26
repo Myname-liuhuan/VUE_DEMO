@@ -72,8 +72,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       // 代理跨域（模拟示例）
       proxy: {
         '/api': {
-          target: 'http://43.142.126.219:9010/', // easymock
-          // target: 'http://localhost:9010/', // easymock
+          // target: 'http://43.142.126.219:9010/', // easymock
+          target: 'http://localhost:9010/', // easymock
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },

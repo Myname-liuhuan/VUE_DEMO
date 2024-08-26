@@ -31,24 +31,31 @@
       </template>
     </PropTable>
 
+    <!-- 表中字段详情info页面 -->
     <el-dialog v-model="dialogVisible" :title="title" width="50%">
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm" :size="formSize">
-        <el-form-item label="活动名称" prop="name">
-          <el-input v-model="ruleForm.name" />
+        <el-form-item label="音频名称" prop="musicName">
+          <el-input v-model="ruleForm.musicName" />
         </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="ruleForm.sex">
-            <el-radio :label="1">男</el-radio>
-            <el-radio :label="0">女</el-radio>
-          </el-radio-group>
+
+        <el-form-item label="音频链接" prop="musicUrl">
+          <el-input v-model="ruleForm.musicUrl" />
         </el-form-item>
-        <el-form-item label="价格" prop="price">
-          <el-input v-model="ruleForm.price" />
+        <el-form-item label="图片链接" prop="imageUrl">
+          <el-input v-model="ruleForm.imageUrl" />
+        </el-form-item>
+        <el-form-item label="缩略图链接" prop="miniImageUrl">
+          <el-input v-model="ruleForm.miniImageUrl" />
+        </el-form-item>
+        <el-form-item label="歌手" prop="singerId">
+          <el-select v-model="ruleForm.singerId" placeholder="请选择歌手">
+            <el-option v-for="item in singerList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button @click="cancelDialog">取消</el-button>
           <el-button type="primary" @click="handleClose(ruleFormRef)">确定</el-button>
         </span>
       </template>
@@ -57,7 +64,6 @@
 </template>
 <script lang="ts" setup name="music">
   import { ref, reactive, onMounted, nextTick } from 'vue'
-  import * as dayjs from 'dayjs'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance } from 'element-plus'
   import { columns } from './constants'
@@ -73,10 +79,20 @@
   const formSize = ref('default')
   const ruleFormRef = ref<FormInstance>()
   const ruleForm = reactive({
-    name: '',
-    sex: null,
-    price: null,
+    musicName: '',
+    musicUrl: '',
+    imageUrl: '',
+    miniImageUrl: '',
+    singerId: null,
   })
+  // 歌手列表
+  const singerList = ref([
+    onMounted(() => {
+      axios.get('/api/media/singer/getList').then((response) => {
+        singerList.value = response.data.data
+      })
+    }),
+  ])
 
   const pagination = reactive({
     currentPage: 1,
@@ -103,6 +119,9 @@
   const rowObj = ref({})
   const selectObj = ref([])
 
+  /**
+   * info弹窗提交逻辑
+   */
   const handleClose = async () => {
     await ruleFormRef.value.validate((valid, fields) => {
       if (valid) {
@@ -115,7 +134,6 @@
           zip: 200333,
           province: '上海',
           admin: 'admin',
-          date: dayjs().format('YYYY-MM-DD'),
         }
         if (title.value === '新增') {
           list.value = [obj, ...list.value]
@@ -137,6 +155,12 @@
     })
   }
 
+  //弹窗取消按钮事件
+  const cancelDialog = () => {
+    dialogVisible.value = false
+  }
+
+  //弹出弹窗
   const add = () => {
     title.value = '新增'
     dialogVisible.value = true
