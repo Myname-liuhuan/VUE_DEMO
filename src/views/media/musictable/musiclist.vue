@@ -121,34 +121,22 @@
 
   /**
    * info弹窗提交逻辑
+   * ruleFormRef用来校验字段，ruleForm用来获取表单数据
    */
   const handleClose = async () => {
     await ruleFormRef.value.validate((valid, fields) => {
       if (valid) {
-        let obj = {
-          id: Date.now(),
-          ...ruleForm,
-          age: 0,
-          city: '普陀区',
-          address: '上海市普上海',
-          zip: 200333,
-          province: '上海',
-          admin: 'admin',
+        let params = {
+          ...ruleForm, //表单数据
         }
         if (title.value === '新增') {
-          list.value = [obj, ...list.value]
-          ElMessage.success('添加成功')
+          //发送添加请求
         } else {
-          list.value.forEach((item) => {
-            if (item.id === rowObj.value.id) {
-              item.name = obj.name
-              item.sex = obj.sex
-              item.price = obj.price
-            }
-          })
+          //发送修改请求
         }
+        //这里需要加一个步骤清除表单数据
+
         dialogVisible.value = false
-        console.log('submit!', obj)
       } else {
         console.log('error submit!', fields)
       }
