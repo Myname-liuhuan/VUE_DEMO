@@ -117,27 +117,12 @@
 
   import { reactive } from 'vue'
 
-  let obj = {}
-  let search = []
-  for (let item of props.columns) {
-    if (item.inSearch) {
-      obj[item.name] = null
-    }
-    if (item.inSearch) {
-      search.push(item)
-    }
-  }
-  const formSearchData = ref(search)
-  const formInline = reactive(obj)
-
-  const onSubmit = () => {
-    emit('onSubmit', formInline)
+  const onSubmit = (searchParams) => {
+    //传递给父组件
+    emit('onSubmit', searchParams)
   }
 
   const reset = (formEl: FormInstance | undefined) => {
-    formSearchData.value.forEach((item) => {
-      formInline[item.name] = null
-    })
     emit('reset')
   }
   const deleteAction = (row) => {

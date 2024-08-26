@@ -198,13 +198,13 @@
     ElMessage.success('触发重置方法')
   }
 
-  const onSubmit = (val) => {
-    console.log('val===', val)
+  //查询按钮
+  const onSubmit = (searchParams) => {
     ElMessage.success('触发查询方法')
     loading.value = true
-    setTimeout(() => {
-      loading.value = false
-    }, 500)
+    let params = { ...searchParams, ...pagination }
+    loadPageList(params)
+    loading.value = false
   }
 
   //绑定框架事件,在上一页和下一页的时候会被调用

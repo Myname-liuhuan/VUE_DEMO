@@ -78,6 +78,7 @@
   // 获取参数进行组装为 obj
   const onSubmit = () => {
     let searchParams = getFormParams()
+    //传递给父组件
     emit('submit', searchParams)
   }
 
