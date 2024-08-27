@@ -131,15 +131,25 @@
     await ruleFormRef.value.validate((valid, fields) => {
       if (valid) {
         //发起新增或者修改请求
-        axios.post('/api/media/music/saveMusicInfo', { ...ruleForm }).then((response) => {
-          if (response.data.code == 200) {
-            ElMessage.success(response.data.message)
-            //刷新表格数据
-            loadPageList({ ...pagination })
-          } else {
-            ElMessage.error(response.data.message)
-          }
-        })
+        axios
+          .post(
+            '/api/media/music/saveMusicInfo',
+            { ...ruleForm },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+          .then((response) => {
+            if (response.data.code == 200) {
+              ElMessage.success(response.data.message)
+              //刷新表格数据
+              loadPageList({ ...pagination })
+            } else {
+              ElMessage.error(response.data.message)
+            }
+          })
         //关闭弹窗
         closeDialog()
       } else {
