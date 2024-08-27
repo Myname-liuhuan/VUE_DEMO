@@ -13,7 +13,7 @@
     >
       <template #btn>
         <div style="display: flex; justify-content: flex-end">
-          <el-button type="primary" @click="add"
+          <el-button type="primary" @click="openDialog(true, null)"
             ><el-icon>
               <plus />
             </el-icon>
@@ -26,7 +26,7 @@
       </template>
       <template #sex="scope">{{ scope.row.sex ? '男' : '女' }}</template>
       <template #operation="scope">
-        <el-button type="primary" size="small" icon="Edit" @click="edit(scope.row)"> 编辑 </el-button>
+        <el-button type="primary" size="small" icon="Edit" @click="openDialog(false, scope.row)"> 编辑 </el-button>
         <el-button type="danger" size="small" icon="Delete" @click="del(scope.row)"> 删除 </el-button>
       </template>
     </PropTable>
@@ -55,7 +55,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="cancelDialog">取消</el-button>
+          <el-button @click="closeDialog">取消</el-button>
           <el-button type="primary" @click="handleClose(ruleFormRef)">确定</el-button>
         </span>
       </template>
@@ -77,28 +77,18 @@
   let total = ref(0)
 
   const formSize = ref('default')
+  //用来做表单中字段校验
   const ruleFormRef = ref<FormInstance>()
+  //用来存放表单数据
   const ruleForm = reactive({
+    id: '',
     musicName: '',
     musicUrl: '',
     imageUrl: '',
     miniImageUrl: '',
     singerId: null,
   })
-  // 歌手列表
-  const singerList = ref([
-    onMounted(() => {
-      axios.get('/api/media/singer/getList').then((response) => {
-        singerList.value = response.data.data
-      })
-    }),
-  ])
-
-  const pagination = reactive({
-    currentPage: 1,
-    pageSize: 10,
-  })
-
+  //表单字段校验规则
   const rules = reactive({
     name: [
       { required: true, message: '请输入活动名称活动区域', trigger: 'blur' },
@@ -114,9 +104,22 @@
     ],
   })
 
+  // 歌手列表
+  const singerList = ref([
+    onMounted(() => {
+      axios.get('/api/media/singer/getList').then((response) => {
+        singerList.value = response.data.data
+      })
+    }),
+  ])
+
+  const pagination = reactive({
+    currentPage: 1,
+    pageSize: 10,
+  })
+
   const dialogVisible = ref(false)
   const title = ref('新增')
-  const rowObj = ref({})
   const selectObj = ref([])
 
   /**
@@ -129,14 +132,20 @@
         let params = {
           ...ruleForm, //表单数据
         }
-        if (title.value === '新增') {
-          //发送添加请求
-        } else {
-          //发送修改请求
-        }
-        //这里需要加一个步骤清除表单数据
-
-        dialogVisible.value = false
+        //发起新增或者修改请求
+        axios
+          .get('/api/media/music/saveMusicInfo', {
+            params: params,
+          })
+          .then((response) => {
+            if (response.data.code == 200) {
+              ElMessage.success(response.data.message)
+            } else {
+              ElMessage.error(response.data.message)
+            }
+          })
+        //隐藏弹窗
+        closeDialog()
       } else {
         console.log('error submit!', fields)
       }
@@ -144,13 +153,32 @@
   }
 
   //弹窗取消按钮事件
-  const cancelDialog = () => {
+  const closeDialog = () => {
+    //每次关闭弹窗的时候同时要清除表单数据
+    ruleForm.id = ''
+    ruleForm.musicName = ''
+    ruleForm.musicUrl = ''
+    ruleForm.imageUrl = ''
+    ruleForm.miniImageUrl = ''
+    ruleForm.singerId = null
+
     dialogVisible.value = false
   }
 
   //弹出弹窗
-  const add = () => {
-    title.value = '新增'
+  const openDialog = (isAdd: boolean, row: any) => {
+    if (isAdd) {
+      title.value = '新增'
+    } else {
+      title.value = '编辑'
+      ruleForm.id = row.id
+      ruleForm.musicName = row.musicName
+      ruleForm.musicUrl = row.musicUrl
+      ruleForm.imageUrl = row.imageUrl
+      ruleForm.miniImageUrl = row.miniImageUrl
+      ruleForm.singerId = row.singerId
+      // ruleFormRef.value.resetFields()
+    }
     dialogVisible.value = true
   }
 
@@ -172,15 +200,6 @@
   }
   const selectionChange = (val) => {
     selectObj.value = val
-  }
-
-  const edit = (row) => {
-    title.value = '编辑'
-    rowObj.value = row
-    dialogVisible.value = true
-    ruleForm.name = row.name
-    ruleForm.sex = row.sex
-    ruleForm.price = row.price
   }
 
   const del = (row) => {
