@@ -139,8 +139,10 @@
         })
         //隐藏弹窗
         closeDialog()
-        //刷新页面
-        loadPageList({ ...pagination })
+        //刷新页面 多个dom的修改间隔很短的时候后面的建议使用nextTick保证后面的dom操作页面能更新
+        nextTick(() => {
+          loadPageList({ ...pagination })
+        })
       } else {
         console.log('error submit!', fields)
       }
