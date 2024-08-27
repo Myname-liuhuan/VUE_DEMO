@@ -141,6 +141,9 @@
   }
 </script>
 <style scoped lang="scss">
+  :deep(.table_cell .cell) {
+    white-space: nowrap;
+  }
   .edit-input {
     padding-right: 100px;
   }
