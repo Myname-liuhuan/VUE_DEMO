@@ -49,9 +49,7 @@
 <script lang="ts" setup>
   import { computed, PropType, ref } from 'vue'
   import SearchForm from '@/components/SearchForm/index.vue'
-  import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance } from 'element-plus'
-  const ruleFormRef = ref<FormInstance>()
   const emit = defineEmits(['reset', 'onSubmit', 'selection-change'])
   let props = defineProps({
     columns: {
@@ -101,22 +99,9 @@
     }
   })
 
-  const currentPage = ref(1)
-  // 收缩展开
-  const isExpand = ref(false)
   const handleSizeChange = (val: number) => {
     console.log(`${val} items per page`)
   }
-
-  const listLoading = ref(false)
-  const confirmEdit = (row) => {
-    row.edit = false
-  }
-  const cancelEdit = (row) => {
-    row.edit = false
-  }
-
-  import { reactive } from 'vue'
 
   const onSubmit = (searchParams) => {
     //传递给父组件
@@ -125,19 +110,6 @@
 
   const reset = (formEl: FormInstance | undefined) => {
     emit('reset')
-  }
-  const deleteAction = (row) => {
-    ElMessageBox.confirm('你确定要删除当前项吗?', '温馨提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-      draggable: true,
-    })
-      .then(() => {
-        list.value = list.value.filter((item) => item.id !== row.id)
-        ElMessage.success('删除成功')
-      })
-      .catch(() => {})
   }
 </script>
 <style scoped lang="scss">
