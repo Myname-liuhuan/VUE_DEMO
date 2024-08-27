@@ -86,22 +86,22 @@
     musicUrl: '',
     imageUrl: '',
     miniImageUrl: '',
-    singerId: null,
+    singerId: '',
   })
   //表单字段校验规则
   const rules = reactive({
-    name: [
-      { required: true, message: '请输入活动名称活动区域', trigger: 'blur' },
-      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
-    ],
-    price: [{ required: true, message: '请输入价格', trigger: 'blur' }],
-    sex: [
-      {
-        required: true,
-        message: '请选择性别',
-        trigger: 'change',
-      },
-    ],
+    // name: [
+    //   { required: true, message: '请输入活动名称活动区域', trigger: 'blur' },
+    //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
+    // ],
+    // price: [{ required: true, message: '请输入价格', trigger: 'blur' }],
+    // sex: [
+    //   {
+    //     required: true,
+    //     message: '请选择性别',
+    //     trigger: 'change',
+    //   },
+    // ],
   })
 
   // 歌手列表
@@ -133,19 +133,18 @@
           ...ruleForm, //表单数据
         }
         //发起新增或者修改请求
-        axios
-          .get('/api/media/music/saveMusicInfo', {
-            params: params,
-          })
-          .then((response) => {
-            if (response.data.code == 200) {
-              ElMessage.success(response.data.message)
-            } else {
-              ElMessage.error(response.data.message)
-            }
-          })
+        axios.post('/api/media/music/saveMusicInfo', params).then((response) => {
+          console.log(response)
+          if (response.data.code == 200) {
+            ElMessage.success(response.data.message)
+          } else {
+            ElMessage.error(response.data.message)
+          }
+        })
         //隐藏弹窗
         closeDialog()
+        //刷新页面
+        loadPageList({ ...pagination })
       } else {
         console.log('error submit!', fields)
       }
@@ -160,7 +159,7 @@
     ruleForm.musicUrl = ''
     ruleForm.imageUrl = ''
     ruleForm.miniImageUrl = ''
-    ruleForm.singerId = null
+    ruleForm.singerId = ''
 
     dialogVisible.value = false
   }
@@ -249,8 +248,7 @@
 
   onMounted(() => {
     nextTick(() => {
-      let params = { pageNum: pagination.currentPage, pageSize: pagination.pageSize }
-      loadPageList(params)
+      loadPageList({ ...pagination })
     })
     setTimeout(() => {
       loading.value = false
