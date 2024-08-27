@@ -11,6 +11,7 @@ export const columns = [
     sortable: true,
     valueType: 'input',
     span: 8,
+    width: 110,
     attrs: {
       placeholder: '请输入',
     },
@@ -20,8 +21,8 @@ export const columns = [
     label: '音频地址',
     sortable: true,
     valueType: 'input',
-    width: 180,
-    span: 12,
+    width: 220,
+    span: 8,
     attrs: {
       placeholder: '请输入',
     },
@@ -30,7 +31,7 @@ export const columns = [
     name: 'imageUrl',
     label: '图片地址',
     valueType: 'input',
-    width: 180,
+    width: 220,
     span: 8,
     attrs: {
       placeholder: '请输入',
@@ -59,7 +60,7 @@ export const columns = [
   {
     name: 'musicTimeLength',
     label: '音频时长(S)',
-    width: 120,
+    width: 90,
   },
   {
     name: 'operation',
