@@ -18,6 +18,7 @@
           class="zb-table"
           :data="data"
           :border="true"
+          cell-class-name="table_cell"
           @selection-change="(val) => emit('selection-change', val)"
         >
           <template v-for="item in columns">
@@ -187,12 +188,10 @@
         height: 100%;
       }
     }
-    ::v-deep {
-      .el-table__header th {
-        font-size: 15px;
-        font-weight: 700;
-        color: #252525;
-      }
+    :deep(.el-table__header th) {
+      font-size: 15px;
+      font-weight: 700;
+      color: #252525;
     }
     .pagination {
       width: 100%;
