@@ -129,12 +129,8 @@
   const handleClose = async () => {
     await ruleFormRef.value.validate((valid, fields) => {
       if (valid) {
-        let params = {
-          ...ruleForm, //表单数据
-        }
         //发起新增或者修改请求
-        axios.post('/api/media/music/saveMusicInfo', params).then((response) => {
-          console.log(response)
+        axios.post('/api/media/music/saveMusicInfo', { ...ruleForm }).then((response) => {
           if (response.data.code == 200) {
             ElMessage.success(response.data.message)
           } else {
