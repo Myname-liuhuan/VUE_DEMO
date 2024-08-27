@@ -132,8 +132,8 @@
 
     .header {
       display: flex;
-      padding: 16px 16px 0 16px;
-      margin-bottom: 16px;
+      padding: 10px 10px 0 10px;
+      margin-bottom: 10px;
       border-radius: 4px;
       background: white;
       box-shadow: 0 0 12px rgb(0 0 0 / 5%);
@@ -144,7 +144,7 @@
     .footer {
       flex: 1;
       display: flex;
-      padding: 16px;
+      padding: 10px;
       flex-direction: column;
       border-radius: 4px;
       overflow: hidden;
@@ -152,7 +152,7 @@
       box-shadow: 0 0 12px rgb(0 0 0 / 5%);
       min-height: 300px;
       .operator {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
       }
       .table {
         position: relative;

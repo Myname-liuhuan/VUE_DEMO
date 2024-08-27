@@ -272,7 +272,7 @@
     flex: 1;
     display: flex;
     width: 100%;
-    padding: 16px;
+    padding: 10px;
     box-sizing: border-box;
   }
 
