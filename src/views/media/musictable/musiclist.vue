@@ -27,7 +27,7 @@
       <template #sex="scope">{{ scope.row.sex ? '男' : '女' }}</template>
       <template #operation="scope">
         <el-button type="primary" size="small" icon="Edit" @click="openDialog(false, scope.row)"> 编辑 </el-button>
-        <el-button type="danger" size="small" icon="Delete" @click="del(scope.row)"> 删除 </el-button>
+        <el-button type="danger" size="small" icon="Delete" @click="deleteById(scope.row)"> 删除 </el-button>
       </template>
     </PropTable>
 
@@ -71,6 +71,7 @@
   const appContainer = ref(null)
   import PropTable from './proptable.vue'
   import axios from 'axios'
+  import { id } from 'element-plus/es/locale'
 
   let baseColumns = reactive(columns)
   let list = ref([])
@@ -133,16 +134,14 @@
         axios.post('/api/media/music/saveMusicInfo', { ...ruleForm }).then((response) => {
           if (response.data.code == 200) {
             ElMessage.success(response.data.message)
+            //刷新表格数据
+            loadPageList({ ...pagination })
           } else {
             ElMessage.error(response.data.message)
           }
         })
-        //隐藏弹窗
+        //关闭弹窗
         closeDialog()
-        //刷新页面 多个dom的修改间隔很短的时候后面的建议使用nextTick保证后面的dom操作页面能更新
-        nextTick(() => {
-          loadPageList({ ...pagination })
-        })
       } else {
         console.log('error submit!', fields)
       }
@@ -198,8 +197,8 @@
   const selectionChange = (val) => {
     selectObj.value = val
   }
-
-  const del = (row) => {
+  ;``
+  const deleteById = (row) => {
     console.log('row==', row)
     ElMessageBox.confirm('你确定要删除当前项吗?', '温馨提示', {
       confirmButtonText: '确定',
@@ -208,12 +207,22 @@
       draggable: true,
     })
       .then(() => {
-        list.value = list.value.filter((item) => item.id !== row.id)
-        ElMessage.success('删除成功')
-        loading.value = true
-        setTimeout(() => {
-          loading.value = false
-        }, 500)
+        //发起删除请求
+        axios
+          .post('/api/media/music/logicalDeleteById', row.id, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            if (response.data.code == 200) {
+              ElMessage.success(response.data.message)
+              //刷新页面
+              loadPageList({ ...pagination })
+            } else {
+              ElMessage.error(response.data.message)
+            }
+          })
       })
       .catch(() => {})
   }
@@ -254,6 +263,8 @@
   })
 
   function loadPageList(params) {
+    //默认只查未删除的
+    params.delFlag = 0
     axios
       .get('/api/media/music/pageListJoinSong', {
         params: params,
