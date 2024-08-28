@@ -71,7 +71,7 @@
   const appContainer = ref(null)
   import PropTable from './proptable.vue'
   import axios from 'axios'
-  import { id } from 'element-plus/es/locale'
+  import service from '@/api/request' //封装的axios
 
   let baseColumns = reactive(columns)
   let list = ref([])
@@ -108,7 +108,7 @@
   // 歌手列表
   const singerList = ref([
     onMounted(() => {
-      axios.get('/api/media/singer/getList').then((response) => {
+      service.get('/media/singer/getList').then((response) => {
         singerList.value = response.data.data
       })
     }),
@@ -131,25 +131,15 @@
     await ruleFormRef.value.validate((valid, fields) => {
       if (valid) {
         //发起新增或者修改请求
-        axios
-          .post(
-            '/api/media/music/saveMusicInfo',
-            { ...ruleForm },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            },
-          )
-          .then((response) => {
-            if (response.data.code == 200) {
-              ElMessage.success(response.data.message)
-              //刷新表格数据
-              loadPageList({ ...pagination })
-            } else {
-              ElMessage.error(response.data.message)
-            }
-          })
+        service.post('/media/music/saveMusicInfo', ruleForm).then((response) => {
+          if (response.data.code == 200) {
+            ElMessage.success(response.data.message)
+            //刷新表格数据
+            loadPageList({ ...pagination })
+          } else {
+            ElMessage.error(response.data.message)
+          }
+        })
         //关闭弹窗
         closeDialog()
       } else {
@@ -218,21 +208,15 @@
     })
       .then(() => {
         //发起删除请求
-        axios
-          .post('/api/media/music/logicalDeleteById', row.id, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          .then((response) => {
-            if (response.data.code == 200) {
-              ElMessage.success(response.data.message)
-              //刷新页面
-              loadPageList({ ...pagination })
-            } else {
-              ElMessage.error(response.data.message)
-            }
-          })
+        service.post('/media/music/logicalDeleteById', row.id).then((response) => {
+          if (response.data.code == 200) {
+            ElMessage.success(response.data.message)
+            //刷新页面
+            loadPageList({ ...pagination })
+          } else {
+            ElMessage.error(response.data.message)
+          }
+        })
       })
       .catch(() => {})
   }
@@ -275,8 +259,9 @@
   function loadPageList(params) {
     //默认只查未删除的
     params.delFlag = 0
-    axios
-      .get('/api/media/music/pageListJoinSong', {
+    //get请求参数需要再用一层{}包裹
+    service
+      .get('/media/music/pageListJoinSong', {
         params: params,
       })
       .then((response) => {
