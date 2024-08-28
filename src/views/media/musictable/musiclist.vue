@@ -63,14 +63,13 @@
   </div>
 </template>
 <script lang="ts" setup name="music">
-  import { ref, reactive, onMounted, nextTick } from 'vue'
+  import { ref, reactive, onMounted, nextTick, onBeforeUnmount } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance } from 'element-plus'
   import { columns } from './constants'
   const loading = ref(true)
   const appContainer = ref(null)
   import PropTable from './proptable.vue'
-  import axios from 'axios'
   import service from '@/api/request' //封装的axios
 
   let baseColumns = reactive(columns)
@@ -91,18 +90,8 @@
   })
   //表单字段校验规则
   const rules = reactive({
-    // name: [
-    //   { required: true, message: '请输入活动名称活动区域', trigger: 'blur' },
-    //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
-    // ],
-    // price: [{ required: true, message: '请输入价格', trigger: 'blur' }],
-    // sex: [
-    //   {
-    //     required: true,
-    //     message: '请选择性别',
-    //     trigger: 'change',
-    //   },
-    // ],
+    musicUrl: [{ required: true, message: '请输入音频链接', trigger: 'blur' }],
+    imageUrl: [{ required: true, message: '请输入图片链接', trigger: 'blur' }],
   })
 
   // 歌手列表
@@ -150,7 +139,12 @@
 
   //弹窗取消按钮事件
   const closeDialog = () => {
-    //每次关闭弹窗的时候同时要清除表单数据
+    dialogVisible.value = false
+  }
+
+  //弹出弹窗
+  const openDialog = (isAdd: boolean, row: any) => {
+    //每次打开弹窗的时候都要先清除表单数据
     ruleForm.id = ''
     ruleForm.musicName = ''
     ruleForm.musicUrl = ''
@@ -158,11 +152,6 @@
     ruleForm.miniImageUrl = ''
     ruleForm.singerId = ''
 
-    dialogVisible.value = false
-  }
-
-  //弹出弹窗
-  const openDialog = (isAdd: boolean, row: any) => {
     if (isAdd) {
       title.value = '新增'
     } else {
@@ -197,7 +186,7 @@
   const selectionChange = (val) => {
     selectObj.value = val
   }
-  ;``
+
   const deleteById = (row) => {
     console.log('row==', row)
     ElMessageBox.confirm('你确定要删除当前项吗?', '温馨提示', {
