@@ -99,9 +99,8 @@
     }
   })
 
-  const handleSizeChange = (val: number) => {
-    console.log(`${val} items per page`)
-  }
+  //分页size变化时触发方法
+  const handleSizeChange = (val: number) => {}
 
   const onSubmit = (searchParams) => {
     //传递给父组件
