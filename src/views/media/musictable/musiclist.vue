@@ -20,11 +20,10 @@
             添加</el-button
           >
           <el-button type="danger" @click="batchDelete"
-            ><el-icon> <delete /> </el-icon>删除</el-button
+            ><el-icon> <delete /> </el-icon>批量删除</el-button
           >
         </div>
       </template>
-      <template #sex="scope">{{ scope.row.sex ? '男' : '女' }}</template>
       <template #operation="scope">
         <el-button type="primary" size="small" icon="Edit" @click="openDialog(false, scope.row)"> 编辑 </el-button>
         <el-button type="danger" size="small" icon="Delete" @click="deleteById(scope.row)"> 删除 </el-button>
@@ -110,7 +109,7 @@
 
   const dialogVisible = ref(false)
   const title = ref('新增')
-  const selectObj = ref([])
+  const formSelectedData = ref([]) //选择的行数据
 
   /**
    * info弹窗提交逻辑
@@ -167,8 +166,9 @@
     dialogVisible.value = true
   }
 
+  //批量删除
   const batchDelete = () => {
-    if (!selectObj.value.length) {
+    if (!formSelectedData.value.length) {
       return ElMessage.error('未选中任何行')
     }
     ElMessageBox.confirm('你确定要删除选中项吗?', '温馨提示', {
@@ -178,13 +178,25 @@
       draggable: true,
     })
       .then(() => {
-        ElMessage.success('模拟删除成功')
-        list.value = list.value.concat([])
+        //提取选中行的id
+        const ids = formSelectedData.value.map((item) => item.id)
+        //发起批量删除请求
+        service.post('/media/music/logicalBatchDeleteByIds', ids).then((response) => {
+          if (response.data.code == 200) {
+            ElMessage.success(response.data.message)
+            //刷新表格数据
+            loadPageList({ ...pagination })
+          } else {
+            ElMessage.error(response.data.message)
+          }
+        })
       })
       .catch(() => {})
   }
+
+  //记录选择的行数据
   const selectionChange = (val) => {
-    selectObj.value = val
+    formSelectedData.value = val
   }
 
   const deleteById = (row) => {
