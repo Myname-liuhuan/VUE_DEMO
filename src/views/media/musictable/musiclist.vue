@@ -178,10 +178,13 @@
       draggable: true,
     })
       .then(() => {
-        //提取选中行的id
-        const ids = formSelectedData.value.map((item) => item.id)
+        //提取选中行的id为json数组
+        let params = []
+        for (let i = 0; i < formSelectedData.value.length; i++) {
+          params.push({ id: formSelectedData.value[i].id })
+        }
         //发起批量删除请求
-        service.post('/media/music/logicalBatchDeleteByIds', ids).then((response) => {
+        service.post('/media/music/logicalBatchDeleteByIds', params).then((response) => {
           if (response.data.code == 200) {
             ElMessage.success(response.data.message)
             //刷新表格数据
