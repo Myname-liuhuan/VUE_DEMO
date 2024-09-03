@@ -97,6 +97,8 @@
   const singerList = ref([
     onMounted(() => {
       service.get('/media/singer/getList').then((response) => {
+        //头部插入空白选择框
+        response.data.data.unshift({ id: '', name: '无' })
         singerList.value = response.data.data
       })
     }),
