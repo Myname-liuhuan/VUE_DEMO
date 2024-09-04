@@ -20,6 +20,12 @@ const mediaRouter = [
         name: 'musiclist',
         meta: { title: '音频列表', keepAlive: true, icon: 'MenuIcon' },
       },
+      {
+        path: '/media/singerlist',
+        component: () => import('@/views/media/singertable/singerlist.vue'),
+        name: 'singerlist',
+        meta: { title: '歌手列表', keepAlive: true, icon: 'MenuIcon' },
+      },
     ],
   },
   {
