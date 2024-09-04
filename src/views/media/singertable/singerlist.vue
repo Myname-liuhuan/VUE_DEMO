@@ -48,7 +48,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="歌手类型" prop="singerType">
-          <el-input v-model="ruleForm.singerType" />
+          <el-select v-model="ruleForm.singerType" placeholder="请选择歌手类型">
+            <el-option v-for="item in singerTypeOption" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -77,6 +79,10 @@
     { label: '男', value: 0 },
     { label: '女', value: 0 },
     { label: '未知', value: 2 },
+  ]
+  const singerTypeOption = [
+    { label: '独立歌手', value: 1 },
+    { label: '乐队', value: 2 },
   ]
 
   const formSize = ref('default')
