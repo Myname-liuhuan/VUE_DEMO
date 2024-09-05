@@ -30,20 +30,38 @@ export const columns = [
   {
     name: 'sex',
     label: '性别',
-    valueType: 'input',
+    search: true,
+    valueType: 'select',
     width: 80,
     span: 8,
-    attrs: {
-      placeholder: '请输入',
+    options: [
+      {
+        value: 1,
+        label: '男',
+      },
+      {
+        value: 0,
+        label: '女',
+      },
+    ],
+    formatter: (row) => {
+      if (row.sex === 1) return '男'
+      if (row.sex === 0) return '女'
+      return '未知'
     },
   },
   {
     name: 'singerType',
-    label: '创作人类型',
+    label: '歌手类型',
     valueType: 'input',
     span: 8,
     attrs: {
       placeholder: '请输入',
+    },
+    formatter: (row) => {
+      if (row.singerType === 1) return '独立歌手'
+      if (row.singerType === 2) return '乐队'
+      return '未知'
     },
   },
   {
