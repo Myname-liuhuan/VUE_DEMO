@@ -69,7 +69,7 @@
   const loading = ref(true)
   const appContainer = ref(null)
   import PropTable from './proptable.vue'
-  import service from '@/api/request' //封装的axios
+  import service from '@/api/common/request' //封装的axios
 
   let baseColumns = reactive(columns)
   let list = ref([])
