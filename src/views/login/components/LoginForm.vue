@@ -92,7 +92,13 @@
             })
           })
           .catch((error) => {
-            // 登录失败的处理已经在user store中完成，这里只需要停止加载状态
+            // 统一处理登录失败通知
+            ElNotification({
+              title: '登录失败',
+              message: error.response?.data?.message || '用户名或密码错误',
+              type: 'error',
+              duration: 3000,
+            })
             console.log('登录失败:', error)
           })
           .finally(() => {

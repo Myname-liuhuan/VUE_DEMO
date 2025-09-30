@@ -63,12 +63,6 @@ export const useUserStore = defineStore({
             reject(new Error('登录失败：未获取到token'))
           }
         } catch (error) {
-          ElNotification({
-            title: '登录失败',
-            message: error.response?.data?.message || '用户名或密码错误',
-            type: 'error',
-            duration: 3000,
-          })
           reject(error)
         }
       })
