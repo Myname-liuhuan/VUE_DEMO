@@ -74,26 +74,32 @@
 
   const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
-    formEl.validate((valid) => {
+    formEl.validate((valid: boolean) => {
       if (valid) {
         loading.value = true
-        // 登录
-        setTimeout(async () => {
-          await UserStore.login(ruleForm)
-          await router.push({
-            path: '/',
+        // 调用登录接口
+        UserStore.login(ruleForm)
+          .then(async () => {
+            // 登录成功后跳转到首页
+            await router.push({
+              path: '/',
+            })
+            ElNotification({
+              title: getTimeStateStr(),
+              message: '欢迎登录 Vue Admin Perfect',
+              type: 'success',
+              duration: 3000,
+            })
           })
-          ElNotification({
-            title: getTimeStateStr(),
-            message: '欢迎登录 Vue Admin Perfect',
-            type: 'success',
-            duration: 3000,
+          .catch((error) => {
+            // 登录失败的处理已经在user store中完成，这里只需要停止加载状态
+            console.log('登录失败:', error)
           })
-          loading.value = true
-        }, 1000)
+          .finally(() => {
+            loading.value = false
+          })
       } else {
-        console.log('error submit!')
-        return false
+        console.log('表单验证失败!')
       }
     })
   }

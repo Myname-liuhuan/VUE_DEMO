@@ -1,16 +1,9 @@
 import request from './common/request'
 
-export function login(data) {
+// 用户登录
+export function login(data: { username: string; password: string }) {
   return request({
-    url: '/vue-element-perfect/user/login',
-    method: 'post',
-    data,
-  })
-}
-
-export function loginLocal(data: { username: string; password: string }) {
-  return request({
-    url: 'http://127.0.0.1:9080/api/auth/login',
+    url: '/auth/login',
     method: 'post',
     data,
     headers: {

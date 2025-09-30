@@ -1,6 +1,8 @@
-export const errorCodeType = function (code: string): string {
+export const errorCodeType = function (code: string | number): string {
   let errMessage = '未知错误'
-  switch (code) {
+  // 如果是字符串类型，转换为数字
+  const codeNumber = typeof code === 'string' ? parseInt(code, 10) : code
+  switch (codeNumber) {
     case 400:
       errMessage = '请求失败！请您稍后重试'
       break

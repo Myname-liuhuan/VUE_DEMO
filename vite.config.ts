@@ -69,13 +69,11 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       open: true,
       https: false,
       cors: true,
-      // 代理跨域（模拟示例）
+      // 后端地址代理
       proxy: {
         '/api': {
-          // target: 'http://43.142.126.219:9010/', // easymock
-          target: 'http://localhost:9010/', // easymock
+          target: 'http://localhost:9080/', // easymock
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
     },

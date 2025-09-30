@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { login as loginApi } from '@/api/authApi'
+import { ElNotification } from 'element-plus'
 
 export const useUserStore = defineStore({
   // id: 必须的，在所有 Store 中唯一
@@ -19,10 +21,35 @@ export const useUserStore = defineStore({
     login(userInfo) {
       const { username, password } = userInfo
       return new Promise(async (resolve, reject) => {
-        this.token = username
-        this.userInfo = userInfo
-        await this.getRoles()
-        resolve(username)
+        try {
+          // 调用后台接口进行登录验证
+          const response = await loginApi({
+            username,
+            password,
+          })
+
+          // 假设后端返回的数据结构包含token
+          if (response.data && response.data.token) {
+            this.token = response.data.token
+            this.userInfo = response.data.user || userInfo
+            await this.getRoles()
+            resolve(response.data)
+          } else {
+            // 如果后端没有返回token，使用用户名作为token（兼容模式）
+            this.token = username
+            this.userInfo = userInfo
+            await this.getRoles()
+            resolve(username)
+          }
+        } catch (error) {
+          ElNotification({
+            title: '登录失败',
+            message: error.response?.data?.message || '用户名或密码错误',
+            type: 'error',
+            duration: 3000,
+          })
+          reject(error)
+        }
       })
     },
     // 获取用户授权角色信息，实际应用中 可以通过token通过请求接口在这里获取用户信息
