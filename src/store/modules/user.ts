@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
 import { login as loginApi } from '@/api/authApi'
-import { ElNotification } from 'element-plus'
-import { validateJWT, clearAuthInfo, showAuthError, parseJWTPayload } from '@/utils/auth'
+import { validateJWT, clearAuthInfo, parseJWTPayload } from '@/utils/auth'
 import type { UserInfo } from '@/types/userType'
 
 export const useUserStore = defineStore({
   // id: 必须的，在所有 Store 中唯一
-  id: 'userState',
+  id: 'userStore',
   // state: 返回对象的函数
   state: () => ({
     // 登录token
@@ -36,7 +35,7 @@ export const useUserStore = defineStore({
             // 将token存储到localStorage
             localStorage.setItem('token', response.data.token)
 
-            // 直接从token解析用户信息，而不是使用响应中的user数据
+            // 直接从token解析用户信息，而不是再去请求user数据
             try {
               const payload = parseJWTPayload(response.data.token)
               if (payload) {

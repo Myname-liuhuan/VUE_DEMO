@@ -86,7 +86,7 @@
             })
             ElNotification({
               title: getTimeStateStr(),
-              message: '欢迎登录 Vue Admin Perfect',
+              message: '欢迎登录 Vue DEMO 系统',
               type: 'success',
               duration: 3000,
             })

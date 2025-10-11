@@ -36,11 +36,24 @@ service.interceptors.request.use(
 //  response interceptor 接口响应拦截
 service.interceptors.response.use(
   (response: AxiosResponse) => {
-    // 直接返回res，当然你也可以只返回res.data
-    // 系统如果有自定义code也可以在这里处理
-    return response
+    const res = response.data
+    //返回结果为空或者奇怪的格式
+    if (!res || typeof res !== 'object') {
+      return Promise.reject({
+        code: 400,
+        message: '请求错误',
+      })
+    }
+    //返回结果不是正确的（200）
+    if (res.code !== 200) {
+      return Promise.reject(res)
+    }
+    //正确的结果
+    return res.data
   },
   (error: AxiosError) => {
+    // 处理网络错误或http错误
+    console.error(error)
     return Promise.reject(error)
   },
 )
