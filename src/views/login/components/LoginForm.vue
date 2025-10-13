@@ -1,7 +1,7 @@
 <template>
   <div class="login-title">
     <img class="icon" src="@/assets/image/logo.png" alt="logo" />
-    <h2 class="title">Vue-Admin-Perfect</h2>
+    <h2 class="title">Vue-Demo</h2>
   </div>
   <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules">
     <el-form-item label="" prop="username">
