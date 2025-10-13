@@ -49,7 +49,7 @@ service.interceptors.response.use(
       return Promise.reject(res)
     }
     //正确的结果
-    return res.data
+    return res
   },
   (error: AxiosError) => {
     // 判断HTTP状态码，如果不是200就返回errorCodeType中的错误
