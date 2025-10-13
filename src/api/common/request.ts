@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
-import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
 import { errorCodeType } from './errorCodeType'
 // 创建axios实例 进行基本参数配置
@@ -53,17 +52,15 @@ service.interceptors.response.use(
     return res.data
   },
   (error: AxiosError) => {
-    // 处理网络错误或http错误
-    console.error(error)
     // 判断HTTP状态码，如果不是200就返回errorCodeType中的错误
+    let errorMessage = '请求失败'
     if (error.response && error.response.status) {
-      const errorMessage = errorCodeType(error.response.status)
-      return Promise.reject({
-        code: error.response.status,
-        message: errorMessage,
-      })
+      errorMessage = errorCodeType(error.response.status)
     }
-    return Promise.reject(error)
+    return Promise.reject({
+      code: error.response.status,
+      message: errorMessage,
+    })
   },
 )
 
