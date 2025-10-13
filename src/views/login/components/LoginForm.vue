@@ -95,7 +95,7 @@
             // 统一处理登录失败通知
             ElNotification({
               title: '登录失败',
-              message: error.response?.data?.message || '用户名或密码错误',
+              message: error.message || '用户名或密码错误',
               type: 'error',
               duration: 3000,
             })
