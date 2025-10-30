@@ -22,7 +22,7 @@ service.interceptors.request.use(
     const token: string = userStore.token
     // 自定义请求头
     if (token) {
-      config.headers['Authorization'] = token
+      config.headers['Authorization'] = 'Bearer ' + token
     }
     config.headers['Content-Type'] = 'application/json'
     return config

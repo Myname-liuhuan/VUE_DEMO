@@ -11,6 +11,7 @@ const tableRouter = [
     meta: {
       title: '超级表格',
       icon: 'School',
+      roles: ['admin', 'data_analyst'],
     },
     children: [
       {

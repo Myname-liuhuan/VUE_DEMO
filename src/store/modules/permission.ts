@@ -25,12 +25,12 @@ export const usePermissionStore = defineStore({
   // 可以同步 也可以异步
   actions: {
     // 生成路由
-    generateRoutes(roles) {
+    generateRoutes(roles, permissions = []) {
       return new Promise((resolve) => {
         // 在这判断是否有权限，哪些角色拥有哪些权限
         let accessedRoutes
         if (roles && roles.length && !roles.includes('admin')) {
-          accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+          accessedRoutes = filterAsyncRoutes(asyncRoutes, roles, permissions)
         } else {
           accessedRoutes = asyncRoutes || []
         }

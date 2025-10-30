@@ -11,6 +11,7 @@ const tableRouter = [
     meta: {
       title: 'Kettle工具',
       icon: 'School',
+      roles: ['admin', 'developer'],
     },
     children: [
       {

@@ -11,6 +11,7 @@ const mediaRouter = [
     meta: {
       title: '媒体',
       icon: 'School',
+      roles: ['admin', 'media_manager'],
     },
     children: [
       //musicManager子页面

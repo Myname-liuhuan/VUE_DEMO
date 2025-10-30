@@ -12,6 +12,7 @@ const formRouter = [
     meta: {
       title: '超级表单',
       icon: 'Grape',
+      roles: ['admin', 'form_user'],
     },
     children: [
       {

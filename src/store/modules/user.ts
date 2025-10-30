@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { login as loginApi } from '@/api/authApi'
+import { myMenuTree } from '@/api/systemApi'
 import { validateJWT, clearAuthInfo, parseJWTPayload } from '@/utils/auth'
 import type { UserInfo } from '@/types/userType'
 
@@ -14,6 +15,8 @@ export const useUserStore = defineStore({
     userInfo: {} as UserInfo,
     // 角色
     roles: localStorage.roles ? JSON.parse(localStorage.roles) : ([] as string[]),
+    // 权限路径列表
+    permissions: localStorage.permissions ? JSON.parse(localStorage.permissions) : ([] as { path: string; name?: string }[]),
   }),
   getters: {},
   // 可以同步 也可以异步
@@ -56,6 +59,7 @@ export const useUserStore = defineStore({
             }
 
             await this.getRoles()
+            await this.getPermissions()
             resolve(response.data)
           } else {
             // 如果后端没有返回token，拒绝登录
@@ -92,6 +96,66 @@ export const useUserStore = defineStore({
           this.roles = ['admin']
           localStorage.roles = JSON.stringify(this.roles)
           resolve(this.roles)
+        }
+      })
+    },
+    // 从myMenuTree接口获取用户权限信息
+    getPermissions() {
+      return new Promise(async (resolve, reject) => {
+        const token = this.token || localStorage.getItem('token')
+        if (!token) {
+          this.permissions = []
+          localStorage.permissions = JSON.stringify(this.permissions)
+          resolve(this.permissions)
+          return
+        }
+
+        try {
+          // 调用myMenuTree接口获取菜单数据
+          const response = await myMenuTree()
+
+          if (response && response.data) {
+            // 从菜单数据中提取权限信息
+            const permissions: { path: string; name?: string; authority: string }[] = []
+
+            // 递归遍历菜单树，提取所有权限
+            const extractPermissions = (menuList: any[]) => {
+              menuList.forEach((menu) => {
+                // 如果菜单项有perms字段，提取权限
+                if (menu.perms) {
+                  permissions.push({
+                    path: menu.path || '/',
+                    name: menu.menuName,
+                    authority: menu.perms,
+                  })
+                }
+
+                // 递归处理子菜单
+                if (menu.children && menu.children.length > 0) {
+                  extractPermissions(menu.children)
+                }
+              })
+            }
+
+            extractPermissions(response.data)
+            this.permissions = permissions
+
+            // 如果没有提取到任何权限，管理员拥有所有权限
+            if (this.permissions.length === 0 && this.roles.includes('admin')) {
+              this.permissions = [{ path: '/', name: '全部权限', authority: '*' }]
+            }
+          } else {
+            // 接口调用失败，使用默认值
+            this.permissions = this.roles.includes('admin') ? [{ path: '/', name: '全部权限', authority: '*' }] : []
+          }
+
+          localStorage.permissions = JSON.stringify(this.permissions)
+          resolve(this.permissions)
+        } catch (error) {
+          // 如果接口调用失败，管理员拥有所有权限，其他用户无权限
+          this.permissions = this.roles.includes('admin') ? [{ path: '/', name: '全部权限', authority: '*' }] : []
+          localStorage.permissions = JSON.stringify(this.permissions)
+          resolve(this.permissions)
         }
       })
     },
@@ -159,6 +223,7 @@ export const useUserStore = defineStore({
         this.token = null
         this.userInfo = {}
         this.roles = []
+        this.permissions = []
         clearAuthInfo()
         resolve(null)
       })
