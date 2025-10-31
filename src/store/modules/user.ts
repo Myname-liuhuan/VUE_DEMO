@@ -102,14 +102,6 @@ export const useUserStore = defineStore({
     // 从myMenuTree接口获取用户权限信息
     getPermissions() {
       return new Promise(async (resolve, reject) => {
-        const token = this.token || localStorage.getItem('token')
-        if (!token) {
-          this.permissions = []
-          localStorage.permissions = JSON.stringify(this.permissions)
-          resolve(this.permissions)
-          return
-        }
-
         try {
           // 调用myMenuTree接口获取菜单数据
           const response = await myMenuTree()
