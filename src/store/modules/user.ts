@@ -87,13 +87,14 @@ export const useUserStore = defineStore({
             // 从token payload中获取角色信息
             this.roles = Array.isArray(payload.roles) ? payload.roles : [payload.roles]
           } else {
-            // 如果token中没有角色信息，使用默认值
-            this.roles = ['admin']
+            // 如果token中没有角色信息，使用空数组
+            this.roles = []
           }
           localStorage.roles = JSON.stringify(this.roles)
           resolve(this.roles)
         } catch (error) {
-          this.roles = ['admin']
+          // 如果token解析失败，使用空数组
+          this.roles = []
           localStorage.roles = JSON.stringify(this.roles)
           resolve(this.roles)
         }
@@ -132,20 +133,20 @@ export const useUserStore = defineStore({
             extractPermissions(response.data)
             this.permissions = permissions
 
-            // 如果没有提取到任何权限，管理员拥有所有权限
-            if (this.permissions.length === 0 && this.roles.includes('admin')) {
-              this.permissions = [{ path: '/', name: '全部权限', authority: '*' }]
+            // 如果没有提取到任何权限，使用空数组
+            if (this.permissions.length === 0) {
+              this.permissions = []
             }
           } else {
-            // 接口调用失败，使用默认值
-            this.permissions = this.roles.includes('admin') ? [{ path: '/', name: '全部权限', authority: '*' }] : []
+            // 接口调用失败，使用空数组
+            this.permissions = []
           }
 
           localStorage.permissions = JSON.stringify(this.permissions)
           resolve(this.permissions)
         } catch (error) {
-          // 如果接口调用失败，管理员拥有所有权限，其他用户无权限
-          this.permissions = this.roles.includes('admin') ? [{ path: '/', name: '全部权限', authority: '*' }] : []
+          // 如果接口调用失败，使用空数组
+          this.permissions = []
           localStorage.permissions = JSON.stringify(this.permissions)
           resolve(this.permissions)
         }

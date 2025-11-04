@@ -27,12 +27,12 @@ export const usePermissionStore = defineStore({
     // 生成路由
     generateRoutes(roles, permissions = []) {
       return new Promise((resolve) => {
-        // 在这判断是否有权限，哪些角色拥有哪些权限
+        // 统一权限校验
         let accessedRoutes
-        if (roles && roles.length && !roles.includes('admin')) {
+        if (roles && roles.length) {
           accessedRoutes = filterAsyncRoutes(asyncRoutes, roles, permissions)
         } else {
-          accessedRoutes = asyncRoutes || []
+          accessedRoutes = []
         }
         accessedRoutes = accessedRoutes.concat(notFoundRouter)
         this.routes = constantRoutes.concat(accessedRoutes)

@@ -66,11 +66,6 @@ export function hasPermission(roles, permissions, route) {
     return true
   }
 
-  // 管理员拥有所有权限
-  if (roles.includes('admin')) {
-    return true
-  }
-
   // 需要同时满足角色和权限验证
   return hasRolePermission && hasAuthorityPermission
 }
